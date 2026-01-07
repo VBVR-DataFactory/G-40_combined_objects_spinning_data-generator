@@ -6,10 +6,7 @@ import random
 
 
 PROMPTS = [
-    "Rotate each object in place to match the dashed targets, then slide them horizontally to the right into the targets.",
-    "First rotate every shape to the target angle, then move each one to the right into its dashed outline.",
-    "Spin the shapes in place until they match the target orientation, then move them right to the dashed positions.",
-    "Rotate in place to align with the dashed targets, then translate each object horizontally to the right.",
+    "The scene shows [num] connected objects on the left side and dashed target outlines on the right side. The dashed target outlines remain completely stationary. For each object, first rotate it in place to match the orientation of its corresponding dashed target outline, then move it horizontally to the right so that it aligns exactly with and fits within its corresponding dashed target outline.",
 ]
 
 
