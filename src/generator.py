@@ -49,6 +49,9 @@ class TaskGenerator(BaseGenerator):
             video_path = self._generate_video(task_id, task_data)
 
         prompt = get_prompt()
+        # Replace placeholders
+        num_objects = len(task_data["objects"])
+        prompt = prompt.replace("[num]", str(num_objects))
 
         return TaskPair(
             task_id=task_id,
