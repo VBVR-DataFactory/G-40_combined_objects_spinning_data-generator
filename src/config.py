@@ -8,7 +8,7 @@ class TaskConfig(GenerationConfig):
 
     domain: str = "combined_objects_spinning"
     num_samples: int = 50
-    image_size: tuple[int, int] = (512, 512)
+    image_size: tuple[int, int] = (1024, 1024)
 
     generate_videos: bool = True
     video_fps: int = 10
@@ -19,17 +19,17 @@ class TaskConfig(GenerationConfig):
 
     min_objects: int = 2
     max_objects: int = 4
-    min_size: int = 28
-    max_size: int = 40
+    min_size: int = 56
+    max_size: int = 80
 
     rotation_min_deg: int = -90
     rotation_max_deg: int = 90
     min_rotation_delta: int = 30
 
-    canvas_margin: int = 30
+    canvas_margin: int = 60
     left_region_ratio: float = 0.5
     right_region_ratio: float = 0.5
-    target_min_spacing: int = 8
+    target_min_spacing: int = 16
     contact_gap: int = 0
 
     cluster_attempts: int = 80
@@ -38,9 +38,9 @@ class TaskConfig(GenerationConfig):
 
     background_color: tuple[int, int, int] = (255, 255, 255)
     outline_color: tuple[int, int, int] = (60, 60, 60)
-    outline_width: int = 2
+    outline_width: int = 4
 
     target_outline_color: tuple[int, int, int] = (120, 120, 120)
-    target_outline_width: int = 2
-    target_dash_length: int = 8
-    target_dash_gap: int = 6
+    target_outline_width: int = 4
+    target_dash_length: int = 16
+    target_dash_gap: int = 12
