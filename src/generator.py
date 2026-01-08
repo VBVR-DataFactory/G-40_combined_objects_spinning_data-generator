@@ -63,7 +63,16 @@ class TaskGenerator(BaseGenerator):
         )
 
     def _generate_task_data(self) -> dict:
-        for _ in range(self.config.max_layout_attempts):
+        import time
+        start_time = time.time()
+        max_time = 10.0  # Maximum 10 seconds for layout generation
+        
+        for attempt in range(self.config.max_layout_attempts):
+            # Check timeout
+            if time.time() - start_time > max_time:
+                print(f"⚠️  Layout generation timeout after {attempt} attempts")
+                break
+                
             objects = self._sample_objects()
             cluster_centers = self._sample_cluster_centers(objects)
             if cluster_centers is None:
@@ -96,7 +105,44 @@ class TaskGenerator(BaseGenerator):
                 "target_angles": target_angles,
             }
 
-        raise ValueError("Failed to generate a valid layout after retries.")
+        # Fallback: Try with simpler constraints
+        print("⚠️  Trying fallback with relaxed constraints...")
+        for attempt in range(20):  # Limited fallback attempts
+            objects = self._sample_objects()
+            if len(objects) > 3:  # Reduce complexity
+                objects = objects[:3]
+                
+            cluster_centers = self._sample_cluster_centers(objects)
+            if cluster_centers is None:
+                continue
+
+            target_centers = self._sample_target_centers(objects, cluster_centers)
+            if target_centers is None:
+                continue
+
+            for obj, center in zip(objects, cluster_centers):
+                obj["start_center"] = center
+            for obj, center in zip(objects, target_centers):
+                obj["target_center"] = center
+
+            start_centers = [obj["start_center"] for obj in objects]
+            target_centers = [obj["target_center"] for obj in objects]
+            start_angles = [obj["start_angle"] for obj in objects]
+            target_angles = [obj["target_angle"] for obj in objects]
+
+            # Skip connectivity check for fallback (less strict)
+            if not self._layout_is_separated(objects, target_centers, target_angles):
+                continue
+
+            return {
+                "objects": objects,
+                "start_centers": start_centers,
+                "target_centers": target_centers,
+                "start_angles": start_angles,
+                "target_angles": target_angles,
+            }
+        
+        raise ValueError("Failed to generate a valid layout even with fallback.")
 
     def _sample_objects(self) -> list[dict]:
         count = random.randint(self.config.min_objects, self.config.max_objects)

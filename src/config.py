@@ -19,22 +19,22 @@ class TaskConfig(GenerationConfig):
 
     min_objects: int = 2
     max_objects: int = 4
-    min_size: int = 56
-    max_size: int = 80
+    min_size: int = 50
+    max_size: int = 75
 
     rotation_min_deg: int = -90
     rotation_max_deg: int = 90
-    min_rotation_delta: int = 30
+    min_rotation_delta: int = 20
 
-    canvas_margin: int = 60
-    left_region_ratio: float = 0.5
-    right_region_ratio: float = 0.5
-    target_min_spacing: int = 16
+    canvas_margin: int = 50
+    left_region_ratio: float = 0.45
+    right_region_ratio: float = 0.55
+    target_min_spacing: int = 12
     contact_gap: int = 0
 
-    cluster_attempts: int = 80
-    place_attempts: int = 300
-    max_layout_attempts: int = 120
+    cluster_attempts: int = 40
+    place_attempts: int = 150
+    max_layout_attempts: int = 60
 
     background_color: tuple[int, int, int] = (255, 255, 255)
     outline_color: tuple[int, int, int] = (60, 60, 60)
