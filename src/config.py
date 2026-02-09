@@ -11,7 +11,7 @@ class TaskConfig(GenerationConfig):
     image_size: tuple[int, int] = (1024, 1024)
 
     generate_videos: bool = True
-    video_fps: int = 10
+    video_fps: int = 16
     hold_frames: int = 4
     rotation_frames: int = 12
     move_frames: int = 18
