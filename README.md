@@ -78,9 +78,9 @@ The scene shows 2 objects on the left side and dashed target outlines on the rig
 
 <table>
 <tr>
-  <td align="center"><img src="samples/G-40_first_0.png" width="200"/></td>
-  <td align="center"><img src="samples/G-40_video_0.gif" width="200"/></td>
-  <td align="center"><img src="samples/G-40_final_0.png" width="200"/></td>
+  <td align="center"><img src="samples/G-40_first_0.png" width="250"/></td>
+  <td align="center"><img src="samples/G-40_video_0.gif" width="400"/></td>
+  <td align="center"><img src="samples/G-40_final_0.png" width="250"/></td>
 </tr>
 <tr>
   <td align="center"><b>Initial Frame</b><br/>Objects on left, dashed targets on right</td>
