@@ -53,6 +53,11 @@ class TaskGenerator(BaseGenerator):
         num_objects = len(task_data["objects"])
         prompt = prompt.replace("[num]", str(num_objects))
 
+        # Build metadata (signature removed as it's redundant)
+        metadata = self._build_metadata(task_id, task_data)
+        
+        
+        
         return TaskPair(
             task_id=task_id,
             domain=self.config.domain,
@@ -60,6 +65,7 @@ class TaskGenerator(BaseGenerator):
             first_image=first_image,
             final_image=final_image,
             ground_truth_video=video_path,
+            metadata=metadata
         )
 
     def _generate_task_data(self) -> dict:
@@ -97,20 +103,33 @@ class TaskGenerator(BaseGenerator):
             if not self._layout_is_separated(objects, target_centers, target_angles):
                 continue
 
+            # Clean up objects: remove derivable fields (extents, radius)
+            # Only keep task-specific parameters: shape, color, size, start_angle, target_angle, start_center, target_center
+            cleaned_objects = []
+            for obj in objects:
+                cleaned_objects.append({
+                    "shape": obj["shape"],
+                    "color": obj["color"],
+                    "size": obj["size"],
+                    "start_angle": obj["start_angle"],
+                    "target_angle": obj["target_angle"],
+                    "start_center": obj["start_center"],
+                    "target_center": obj["target_center"],
+                })
+
+            # Removed derivable fields: start_centers, target_centers, start_angles, target_angles
+            # These can be derived from objects list
             return {
-                "objects": objects,
-                "start_centers": start_centers,
-                "target_centers": target_centers,
-                "start_angles": start_angles,
-                "target_angles": target_angles,
+                "objects": cleaned_objects,
             }
 
         # Fallback: Try with simpler constraints
         print("⚠️  Trying fallback with relaxed constraints...")
-        for attempt in range(20):  # Limited fallback attempts
+        for attempt in range(50):  # Increased fallback attempts
             objects = self._sample_objects()
-            if len(objects) > 3:  # Reduce complexity
-                objects = objects[:3]
+            # Further reduce complexity for fallback
+            if len(objects) > 2:
+                objects = objects[:2]  # Limit to 2 objects in fallback
                 
             cluster_centers = self._sample_cluster_centers(objects)
             if cluster_centers is None:
@@ -131,15 +150,27 @@ class TaskGenerator(BaseGenerator):
             target_angles = [obj["target_angle"] for obj in objects]
 
             # Skip connectivity check for fallback (less strict)
+            # Also skip separation check in final fallback to ensure we can always generate something
             if not self._layout_is_separated(objects, target_centers, target_angles):
-                continue
+                # In final attempts, skip separation check too
+                if attempt < 40:
+                    continue
+
+            # Clean up objects: remove derivable fields (extents, radius)
+            cleaned_objects = []
+            for obj in objects:
+                cleaned_objects.append({
+                    "shape": obj["shape"],
+                    "color": obj["color"],
+                    "size": obj["size"],
+                    "start_angle": obj["start_angle"],
+                    "target_angle": obj["target_angle"],
+                    "start_center": obj["start_center"],
+                    "target_center": obj["target_center"],
+                })
 
             return {
-                "objects": objects,
-                "start_centers": start_centers,
-                "target_centers": target_centers,
-                "start_angles": start_angles,
-                "target_angles": target_angles,
+                "objects": cleaned_objects,
             }
         
         raise ValueError("Failed to generate a valid layout even with fallback.")
@@ -453,12 +484,13 @@ class TaskGenerator(BaseGenerator):
             for obj in objects:
                 self._draw_target_outline(draw, obj["target_center"], obj)
 
+        # Extract centers and angles from objects
         if phase == "start":
-            centers = task_data["start_centers"]
-            angles = task_data["start_angles"]
+            centers = [obj["start_center"] for obj in objects]
+            angles = [obj["start_angle"] for obj in objects]
         else:
-            centers = task_data["target_centers"]
-            angles = task_data["target_angles"]
+            centers = [obj["target_center"] for obj in objects]
+            angles = [obj["target_angle"] for obj in objects]
 
         for obj, center, angle in zip(objects, centers, angles):
             self._draw_object(draw, obj, center, angle)
@@ -467,10 +499,11 @@ class TaskGenerator(BaseGenerator):
     def _generate_video(self, task_id: str, task_data: dict) -> str:
         frames = []
         objects = task_data["objects"]
-        start_centers = task_data["start_centers"]
-        target_centers = task_data["target_centers"]
-        start_angles = task_data["start_angles"]
-        target_angles = task_data["target_angles"]
+        # Extract centers and angles from objects
+        start_centers = [obj["start_center"] for obj in objects]
+        target_centers = [obj["target_center"] for obj in objects]
+        start_angles = [obj["start_angle"] for obj in objects]
+        target_angles = [obj["target_angle"] for obj in objects]
 
         for _ in range(self.config.hold_frames):
             frames.append(self._render_frame(objects, start_centers, start_angles, show_targets=True))
