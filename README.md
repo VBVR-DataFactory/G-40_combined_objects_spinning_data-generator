@@ -73,7 +73,6 @@ python examples/generate.py --num-samples 50 --no-videos
 ```
 The scene shows 2 objects on the left side and dashed target outlines on the right side. The dashed target outlines remain completely stationary. For each object, first rotate it in place to match the orientation of its corresponding dashed target outline, then move it horizontally to the right so that it aligns exactly with and fits within its corresponding dashed target outline.
 ```
-
 ### Visual
 
 <table>
@@ -118,12 +117,14 @@ Rotate objects to match target orientations, then move them to align perfectly w
 ## 📦 Data Format
 
 ```
-data/questions/combined_objects_spinning_task/combined_objects_spinning_0001/
-├── first_frame.png          # Objects with initial orientations
-├── final_frame.png          # Objects aligned with targets
-├── prompt.txt               # Rotation and alignment instruction
-└── ground_truth.mp4         # Animation of rotate-then-move process
+data/questions/combined_objects_spinning_task/combined_objects_spinning_00000000/
+├── first_frame.png      # Objects with initial orientations
+├── final_frame.png      # Objects aligned with targets
+├── prompt.txt           # Rotation and alignment instruction
+├── ground_truth.mp4     # Animation of rotate-then-move process
+└── question_metadata.json # Task metadata
 ```
+
 
 **File specifications:**
 - **Images**: 1024×1024 PNG format
