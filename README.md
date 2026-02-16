@@ -12,7 +12,7 @@ Each sample pairs a **task** (first frame + prompt describing what needs to happ
 |----------|-------|
 | **Task ID** | G-40 |
 | **Task** | Combined Objects Spinning |
-| **Category** | Visual Reasoning |
+| **Category** | Transformation |
 | **Resolution** | 1024×1024 px |
 | **FPS** | 16 fps |
 | **Duration** | ~3-4 seconds |
